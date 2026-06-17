@@ -407,6 +407,12 @@ If the astro origin bothers you: the output is a structured decision profile, no
 
 ---
 
+## Contributing / developing the framework
+
+Working on team-in-a-box itself? Read [DEVELOPING.md](DEVELOPING.md) before touching anything — in particular, never run `./setup.sh` in the canonical working copy.
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE)

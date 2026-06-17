@@ -450,7 +450,7 @@ RAW_REMAINING=0
 while IFS= read -r -d '' f; do
   # Skip scaffolding and docs
   case "$f" in
-    ./docs/*|./templates/*|./TOKENS.md|./CHARTER.template.md) continue ;;
+    ./docs/*|./templates/*|./TOKENS.md|./CHARTER.template.md|./DEVELOPING.md) continue ;;
   esac
   if grep -q '{{' "$f" 2>/dev/null; then
     _warn "UNRESOLVED tokens in: $f"
@@ -547,6 +547,7 @@ _step 10 "Cleanup scaffolding files"
 
 [ -f "TOKENS.md" ]              && rm "TOKENS.md"              && _ok "removed TOKENS.md"
 [ -f "CHARTER.template.md" ]    && rm "CHARTER.template.md"    && _ok "removed CHARTER.template.md"
+[ -f "DEVELOPING.md" ]          && rm "DEVELOPING.md"          && _ok "removed DEVELOPING.md"
 if [ -d "templates" ]; then
   rm -rf "templates"
   _ok "removed templates/"

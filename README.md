@@ -1,113 +1,182 @@
 # team-in-a-box
 
-A portable engineering organization for Claude Code. Drop it into any repo and get a fully-wired team of agent personas: a chair (PM), 12 specialist/worker seats, a boardroom protocol, a headlights planning discipline, and a file-based KB that persists context across sessions — no external service required.
+**An engineering organization for Claude Code — not a role pack.**
+
+Most "multi-agent" setups are invisible: auto-dispatched subagents that fire inside a single chat. No chain of command. No one to talk to. No memory of what went wrong last time.
+
+team-in-a-box is different. You get a **manager who never writes code**, 12 **employees you can sit with 1:1**, and a **boardroom for the hard calls** — all wired from a single `./setup.sh`.
 
 ---
 
-## What it is
+## How it works
 
-**Hub-and-spoke agent system.** The chair (CLAUDE.md) is the PM. Specialists advise; workers execute. Work flows Human → chair → agent → chair. Agents never coordinate directly.
+```
+You
+ └─ Chair (CLAUDE.md) — the manager. Routes, holds context, NEVER codes.
+      │   Has a subconscious: CHARTER.md — a living profile of how you think.
+      │
+      ├─ claude --agent architect      ← 1:1 direct session
+      ├─ claude --agent fullstack      ← 1:1 direct session
+      ├─ claude --agent ux             ← 1:1 direct session
+      ├─ ... (12 seats total)
+      │
+      └─ /boardroom architect,scientist,strategist <question>
+           Parallel Socratic dispute. Output: decision + next falsifiable step.
+```
 
-**12 seats out of the box:**
-- Specialists: architect, scientist, strategist, senior-engineer, ux
-- Workers: fullstack, designer, naieve-copywriter, technical-copywriter
-- System: general (headlights enforcer), recorder (compression), scrum-master (kanban)
+Work flows **Human → chair → agent → back to chair**. Agents never coordinate directly. The chair is the single point of context, sequence, and accountability.
 
-**Boardroom protocol.** Cross-cutting or high-stakes decisions go to `/boardroom architect,scientist,...` — one round of Socratic dispute per persona, chair calls the result.
+---
 
-**Headlights discipline.** Only plan the next 6ft. Add abstractions when the task demands them, not before. General is the enforcer.
+## The three things that make this different
 
-**File-based KB.** Zero external dependencies. Context lives in `.kb/` — tasks, docs, claims, journals, events. `git kb` is a PATH shim over `kb.sh`. Works offline, in any git repo, no MCP server required.
+**1. Employees you talk to 1:1.**
+Every seat is a real `claude --agent` session — its full charter, journal, and principles loaded. Pull any specialist into a room:
+
+```bash
+claude --agent architect     # schema, tradeoffs, ADRs
+claude --agent fullstack     # implementation
+claude --agent strategist    # what to cut, what to build next
+```
+
+This is not a subagent firing invisibly inside your chat. It's a conversation with a specialist who knows what they own and what they don't.
+
+**2. A manager with a subconscious.**
+The main session (the chair) never writes a line of code. It routes, holds context, convenes boardrooms, and demands cited file paths from everyone it talks to.
+
+Run `/charter` once and the chair gets seeded with a living profile of how you think — your decision patterns, friction triggers, failure modes. The profile starts as a hypothesis and gets corrected by observation. The machine learns how *you* decide.
+
+**3. A boardroom for hard calls.**
+When a decision crosses domains or is hard to reverse:
+
+```
+/boardroom architect,scientist,senior-engineer what's the right data model for X
+```
+
+Each persona holds a position, names their assumption, and states the one falsifiable test that would change their mind. The chair (you) calls the meeting. Output: a decision + the next experiment, logged to the decisions-log. Not consensus — Socratic dispute.
+
+---
+
+## The 12 seats
+
+
+| Seat                 | Class      | What it owns                                                          | Summon                                |
+| -------------------- | ---------- | --------------------------------------------------------------------- | ------------------------------------- |
+| architect            | Specialist | Schema, data model, structural tradeoffs, ADRs                        | `claude --agent architect`            |
+| scientist            | Specialist | Algorithm, signal extraction, evaluation                              | `claude --agent scientist`            |
+| strategist           | Specialist | Prioritization, scope cuts, what-to-build-next                        | `claude --agent strategist`           |
+| senior-engineer      | Specialist | Pre-mortem, refactor-vs-ship, technical debt                          | `claude --agent senior-engineer`      |
+| ux                   | Specialist | User flows, edge cases, wireframes — hard gate before UI starts       | `claude --agent ux`                   |
+| fullstack            | Worker     | End-to-end implementation: routes, APIs, infra                        | `claude --agent fullstack`            |
+| designer             | Worker     | UI, motion, layout hierarchy — never writes copy                      | `claude --agent designer`             |
+| naieve-copywriter    | Worker     | First-touch surfaces: hero, landing, onboarding (5th-grade cap)       | `claude --agent naieve-copywriter`    |
+| technical-copywriter | Worker     | Downstream copy: dashboard, investor narrative, blog, SEO             | `claude --agent technical-copywriter` |
+| general              | System     | WIP discipline, headlights enforcer — call when too much is in flight | `claude --agent general`              |
+| recorder             | System     | Compression only — pre-digests artifacts before boardroom spawns      | `claude --agent recorder`             |
+| scrum-master         | System     | Living kanban, worktree lifecycle, calls "done"                       | `claude --agent scrum-master`         |
+
+
+**Each agent is three things:** a charter (`.claude/agents/<name>.md`), a principles log (what went wrong), and a session journal (long-term memory across sessions). Agents without journals start cold. Agents without principles repeat mistakes.
 
 ---
 
 ## Install
 
 ```bash
-# Option A — clone
-git clone https://github.com/your-org/team-in-a-box my-project-team
-cd my-project-team
+# Clone (with git history)
+git clone https://github.com/your-org/team-in-a-box my-project
+cd my-project
 
-# Option B — degit (no git history)
-npx degit your-org/team-in-a-box my-project-team
-cd my-project-team
+# Or degit (clean slate)
+npx degit your-org/team-in-a-box my-project
+cd my-project
 ```
 
-Then run setup:
+Then run the setup interview:
 
 ```bash
 ./setup.sh
 ```
 
+The interview asks:
+
+1. **Project name** — replaces `{{PROJECT_NAME}}` across all charters
+2. **Your name** — wired into the chair identity and boardroom prompts
+3. **Product description** — one sentence
+4. **Stack** — e.g. `Node / TypeScript / Postgres`
+5. **Deploy command** — wired into the chair's context block
+6. **Which seats to activate** — `all` or a comma list
+
+After answering, setup.sh substitutes all tokens, renders `CHARTER.md`, prunes unselected seats, symlinks `git kb` onto PATH, seeds the KB doc stubs, and drops one starter task on the board.
+
+**The "it worked" moment:**
+
+```
+=======================================================
+  my-project is ready.
+=======================================================
+
+Board:
+[ ready ] First task: run /charter to seed your operating charter
+```
+
 ---
 
-## What setup.sh does
+## What to do first
 
-`setup.sh` runs interactively and asks you for:
+```bash
+# 1. Seed your operating charter (the manager's profile of how you think)
+/charter
 
-1. **Project name** — replaces `{{PROJECT_NAME}}` everywhere (CLAUDE.md, all agent charters, README)
-2. **Your name** — replaces `{{HUMAN_NAME}}` (chair identity in CLAUDE.md, boardroom prompts, CHARTER.md)
-3. **Stack description** — one sentence for CLAUDE.md's Project Context block
-4. **Deploy instructions** — your deploy command(s), wired into CLAUDE.md and README
-5. **Self-hosting domain** — for the fullstack agent's ownership bullet
-6. **KB slug overrides** — the four boot-time `git kb show` slugs (product thesis, schema, stages, sprint overview); defaults are sensible for most projects
-7. **Scientist domain** — what your algorithm/ML agent owns
-8. **Epic names** — infra epic, landing epic, primary algorithm epic
-9. **Design token namespace** — CSS custom property prefix
-10. **Design reference path** — where your design brief lives
+# 2. Open a persona for a direct 1:1
+claude --agent architect
 
-After answering, setup.sh:
-- Renders all `{{TOKEN}}` placeholders in CLAUDE.md, AGENTS.md, COORDINATION.md, and all agent charters
-- Copies `CHARTER.template.md` → `CHARTER.md` and prompts you to run `/charter` to seed it
-- Writes `templates/README.project.md` → `README.md` with your project's stack and deploy info
-- Prints next steps
+# 3. Commit the initialized project
+git add -A && git commit -m "init: team-in-a-box setup"
+```
 
 ---
 
-## The file-based KB
+## The commands
 
-Context lives in `.kb/`:
+
+| Command                                   | What it does                                                                           |
+| ----------------------------------------- | -------------------------------------------------------------------------------------- |
+| `/charter`                                | Seed the living chair profile from birth data (astro prior; observation overwrites it) |
+| `/boardroom persona1,persona2 <question>` | Parallel Socratic dispute; chair calls the meeting                                     |
+| `/dispatch <task>`                        | Route a scoped task to the right agent                                                 |
+| `/kanban`                                 | Print the sprint board                                                                 |
+| `/standup`                                | Status across in-flight tasks                                                          |
+| `/logoff`                                 | Close the session; agents journal; claims released                                     |
+| `/defer`                                  | Stash a boardroom mid-session for resumption                                           |
+
+
+---
+
+## The KB
+
+Context persists in `.kb/` — zero external dependencies, works offline, inside any git repo.
 
 ```
 .kb/
-  tasks/       — one file per task (front-matter: title/status/assignee/parent/tags)
-  docs/        — KB docs by slug path (e.g. context/immutable/headlights-methodology.md)
-  claims/      — atomic claim files (one per in-flight task)
-  scratch/     — session markers (ephemeral, gitignored)
-  workspaces/  — journal checkout workspace
-  events.log   — append-only event log (gitignored)
+  tasks/     — one file per task (status, assignee, tags)
+  docs/      — KB docs by slug path
+  claims/    — in-flight task claims (atomic)
+  events.log — append-only event log
 ```
 
-Agents address docs by slug: `git kb show context/immutable/headlights-methodology`. The slug resolves to `.kb/docs/<slug>.md`. You can create docs with `git kb create <slug>` or by writing `.kb/docs/<slug>.md` directly.
+Agents read docs by slug: `git kb show context/immutable/headlights-methodology`. The shim resolves slugs to `.kb/docs/<slug>.md`.
 
-Seeded slugs (filled at install time):
-- `context/immutable/headlights-methodology` — the 6ft planning rule
-- `context/immutable/gitkb-routing-rules` — how to use the shim
-- `context/extensible/decisions-log` — boardroom decision record
-- `context/extensible/open-questions` — cross-domain questions queue
-- Plus scaffold stubs for: `route-map`, `dev-environment`, `eval-methodology`, `visual-identity`, `api-architecture`, `patterns/sequential-reveal`, and others
+If you want semantic search, vector indexing, or cross-repo shared context, swap in the real GitKB binary — the 15-verb `git kb` contract is identical. See `docs/gitkb-adapter.md`. No agent charter changes needed.
 
 ---
 
-## Pointing git-kb onto PATH
+## What this is NOT
 
-The `git kb` command resolves when `git-kb` (the stub in `.claude/tools/`) is on your PATH. Two ways:
-
-```bash
-# Per-session (add to your shell rc or a direnv .envrc)
-export PATH="$(pwd)/.claude/tools:$PATH"
-
-# Permanent symlink
-ln -sf "$(pwd)/.claude/tools/git-kb" ~/.local/bin/git-kb
-```
-
-Verify: `git kb board` should print an empty kanban.
-
----
-
-## Bring your own GitKB
-
-The default shim is zero-dependency but limited (no semantic search, no vector index, no cross-repo shared context). If you want to swap in the real GitKB binary, see `docs/gitkb-adapter.md`. The 15-verb contract is identical — charters need no changes.
+- **Not a role pack.** Role packs give Claude a persona label. This gives it an org chart, a chain of command, and memory of what went wrong.
+- **Not auto-dispatched invisible subagents.** There is no one to talk to in those systems. Here, every seat has a charter, principles, and a journal. You pull them into the room.
+- **Not a process framework.** Process frameworks tell you how to structure work. This tells your agents who owns what, who never writes code, and who calls "done."
+- **Not a configuration you forget about.** The chair's profile of how you decide gets sharper every session. The agents log what went wrong. The machine learns.
 
 ---
 

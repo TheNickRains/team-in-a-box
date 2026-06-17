@@ -1,16 +1,8 @@
-<div align="center">
-
-```
-╔══════════════════════════════════════════╗
-║                                          ║
-║   t e a m - i n - a - b o x             ║
-║                                          ║
-║   chair → 12 agents → /boardroom         ║
-║                                          ║
-╚══════════════════════════════════════════╝
-```
+<div align="center"><img src="assets/banner.svg" alt="team-in-a-box" width="100%"></div>
 
 # team-in-a-box
+
+<div align="center">
 
 **One orchestrator seat. A manager who never writes code. Twelve employees you talk to 1:1. A boardroom for the hard calls.**
 
@@ -28,7 +20,7 @@ This is an org chart, not a persona label. You drive complex products from a sin
 ```mermaid
 graph TB
     YOU(["👤 You"])
-    CHAIR(["🪑 Chair — CLAUDE.md\nnever writes code"])
+    CHAIR(["🪑 Chair — CLAUDE.md<br>never writes code"])
 
     YOU --> CHAIR
 
@@ -57,7 +49,7 @@ graph TB
     CHAIR --> WORK
     CHAIR --> SYS
 
-    BOARD(["⚖️ /boardroom\nSocratic dispute"])
+    BOARD(["⚖️ /boardroom<br>Socratic dispute"])
     CHAIR -.->|"hard calls"| BOARD
     SPEC -.-> BOARD
 ```
@@ -259,7 +251,7 @@ The chair runs in your main `claude` session. Agents run in their own sessions v
 
 | Command | What it does |
 |---------|-------------|
-| `/charter` | Seed the living chair profile from birth data (astro prior; observation overwrites it) |
+| `/charter` | Seed the chair's living profile of how you decide — a starting prior that observation overwrites |
 | `/boardroom persona1,persona2 <question>` | Parallel Socratic dispute; chair calls the meeting |
 | `/dispatch <task>` | Route a scoped task to the right agent |
 | `/kanban` | Print the sprint board |
@@ -330,7 +322,7 @@ The org model is token-efficient by construction — not by configuration. Four 
 
 **Subagent context isolation.** Each `claude --agent` session carries only its own charter and journal. The orchestrator passes a prompt in, receives output back — it never absorbs the agent's full working context. Heavy execution stays inside the spoke; the hub stays lean.
 
-**Lazy reads.** Agents fetch KB docs on demand via `git kb show <slug>`. Nothing is loaded at boot. The `git kb context` command emits only the active task file, the last 50 lines of the relevant journal, and any docs referenced by slug in the task — not the whole knowledge base.
+**Lazy reads.** Agents fetch KB docs on demand via `git kb show <slug>`. Nothing is loaded at boot. The `git kb context` command emits only the active task file, the last 50 lines of each journal file, and any docs referenced by slug in the task — not the whole knowledge base.
 
 **Recorder compression.** Before a boardroom spawns, the `recorder` agent (running on haiku — the cheapest model in the roster) compresses all relevant context to under 3,000 tokens. Between rounds, it compresses each round's output to per-persona position summaries. Every subsequent spawn receives compressed state, not raw transcripts.
 
@@ -401,7 +393,7 @@ Alternatively, open `.claude/telemetry.html` directly (no server) and use the fi
 Questions and issues: [github.com/TheNickRains/team-in-a-box/issues](https://github.com/TheNickRains/team-in-a-box/issues)
 
 <details>
-<summary>◎ About /charter and the astro prior</summary>
+<summary>◎ About /charter and the cold-start prior</summary>
 
 `/charter` seeds the chair's living profile using birth data as a starting prior. This sounds strange. Here's why it's not:
 

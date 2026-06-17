@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="team-in-a-box — an engineering org for Claude Code">
+
+  <!-- Background fill: warm parchment -->
+  <rect width="1200" height="300" fill="#f5ede0"/>
+
+  <!-- Grain texture: subtle dot field -->
+  <defs>
+    <pattern id="grain" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.6" fill="#c9a96e" opacity="0.10"/>
+      <circle cx="5" cy="5" r="0.4" fill="#8a9a7a" opacity="0.08"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="300" fill="url(#grain)"/>
+
+  <!-- Outer frame: thin warm-gold rule -->
+  <rect x="18" y="18" width="1164" height="264" rx="4" ry="4"
+        fill="none" stroke="#c9a96e" stroke-width="1.2" opacity="0.55"/>
+
+  <!-- Inner frame hairline for depth -->
+  <rect x="24" y="24" width="1152" height="252" rx="2" ry="2"
+        fill="none" stroke="#c9a96e" stroke-width="0.4" opacity="0.30"/>
+
+  <!-- ─────────────────────────────────────────────────────
+       LEFT COLUMN — wordmark + tagline
+       Occupies x: 60–580, vertically centered
+       ───────────────────────────────────────────────────── -->
+
+  <!-- Wordmark: team-in-a-box -->
+  <text x="68" y="168"
+        font-family="'Georgia', 'Times New Roman', 'Palatino Linotype', serif"
+        font-size="72"
+        font-weight="400"
+        letter-spacing="-1.5"
+        fill="#1a1206">team-in-a-box</text>
+
+  <!-- Gold rule under wordmark -->
+  <line x1="68" y1="185" x2="560" y2="185" stroke="#c9a96e" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Tagline -->
+  <text x="70" y="214"
+        font-family="'Georgia', 'Times New Roman', serif"
+        font-size="17"
+        letter-spacing="2.8"
+        fill="#1a1206"
+        opacity="0.55">AN ENGINEERING ORG FOR CLAUDE CODE</text>
+
+  <!-- ─────────────────────────────────────────────────────
+       VERTICAL DIVIDER — separates wordmark from motif
+       ───────────────────────────────────────────────────── -->
+  <line x1="670" y1="48" x2="670" y2="252" stroke="#c9a96e" stroke-width="0.8" opacity="0.35"/>
+
+  <!-- ─────────────────────────────────────────────────────
+       RIGHT COLUMN — org motif (x: 700–1140, vertically centered)
+       Three tiers: YOU → CHAIR → [agents] → /boardroom
+       Rendered as minimal labelled nodes + connecting lines.
+       Generous air; no clutter.
+       ───────────────────────────────────────────────────── -->
+
+  <!-- Tier spacing:
+       YOU:        cx=870, cy=72
+       CHAIR:      cx=870, cy=138
+       AGENTS row: cx=790, 870, 950  cy=204
+       BOARDROOM:  cx=1090, cy=204  (dashed line from CHAIR)
+  -->
+
+  <!-- Connector lines (drawn before nodes so nodes sit on top) -->
+
+  <!-- YOU → CHAIR -->
+  <line x1="870" y1="88" x2="870" y2="120" stroke="#1a1206" stroke-width="1.2" opacity="0.28"/>
+
+  <!-- CHAIR → agents (fan) -->
+  <line x1="870" y1="156" x2="790" y2="187" stroke="#1a1206" stroke-width="1" opacity="0.22"/>
+  <line x1="870" y1="156" x2="870" y2="187" stroke="#1a1206" stroke-width="1" opacity="0.22"/>
+  <line x1="870" y1="156" x2="950" y2="187" stroke="#1a1206" stroke-width="1" opacity="0.22"/>
+
+  <!-- CHAIR → /boardroom (dashed) -->
+  <line x1="920" y1="138" x2="1058" y2="194"
+        stroke="#c9a96e" stroke-width="1.1"
+        stroke-dasharray="4 3"
+        opacity="0.55"/>
+
+  <!-- Node: YOU -->
+  <circle cx="870" cy="72" r="16" fill="#1a1206" opacity="0.07"/>
+  <circle cx="870" cy="72" r="16" fill="none" stroke="#1a1206" stroke-width="1.1" opacity="0.30"/>
+  <text x="870" y="77"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="10.5"
+        letter-spacing="1"
+        fill="#1a1206"
+        opacity="0.60">YOU</text>
+
+  <!-- Node: CHAIR -->
+  <rect x="824" y="120" width="92" height="36" rx="3"
+        fill="#1a1206" opacity="0.06"/>
+  <rect x="824" y="120" width="92" height="36" rx="3"
+        fill="none" stroke="#1a1206" stroke-width="1.1" opacity="0.30"/>
+  <text x="870" y="136"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="10"
+        letter-spacing="0.8"
+        fill="#1a1206"
+        opacity="0.65">CHAIR</text>
+  <text x="870" y="149"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="8.5"
+        fill="#1a1206"
+        opacity="0.38">never writes code</text>
+
+  <!-- Node group: agents (three minimal circles suggesting the roster) -->
+  <!-- Left agent dot -->
+  <circle cx="790" cy="204" r="13" fill="#8a9a7a" opacity="0.12"/>
+  <circle cx="790" cy="204" r="13" fill="none" stroke="#8a9a7a" stroke-width="1" opacity="0.45"/>
+  <text x="790" y="208"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="8.5"
+        letter-spacing="0.5"
+        fill="#1a1206"
+        opacity="0.50">spec</text>
+
+  <!-- Centre agent dot -->
+  <circle cx="870" cy="204" r="13" fill="#8a9a7a" opacity="0.12"/>
+  <circle cx="870" cy="204" r="13" fill="none" stroke="#8a9a7a" stroke-width="1" opacity="0.45"/>
+  <text x="870" y="208"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="8.5"
+        letter-spacing="0.5"
+        fill="#1a1206"
+        opacity="0.50">work</text>
+
+  <!-- Right agent dot -->
+  <circle cx="950" cy="204" r="13" fill="#8a9a7a" opacity="0.12"/>
+  <circle cx="950" cy="204" r="13" fill="none" stroke="#8a9a7a" stroke-width="1" opacity="0.45"/>
+  <text x="950" y="208"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="8.5"
+        letter-spacing="0.5"
+        fill="#1a1206"
+        opacity="0.50">sys</text>
+
+  <!-- Node: /boardroom (gold accent, dashed border) -->
+  <rect x="1036" y="184" width="88" height="36" rx="3"
+        fill="#c9a96e" opacity="0.10"/>
+  <rect x="1036" y="184" width="88" height="36" rx="3"
+        fill="none" stroke="#c9a96e" stroke-width="1.1"
+        stroke-dasharray="4 3"
+        opacity="0.70"/>
+  <text x="1080" y="199"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="10"
+        letter-spacing="0.5"
+        fill="#1a1206"
+        opacity="0.65">/boardroom</text>
+  <text x="1080" y="212"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="8"
+        fill="#1a1206"
+        opacity="0.38">hard calls</text>
+
+  <!-- "12 agents" label below the three dots -->
+  <text x="870" y="234"
+        text-anchor="middle"
+        font-family="'Georgia', serif"
+        font-size="9"
+        letter-spacing="2"
+        fill="#1a1206"
+        opacity="0.30">12 AGENTS</text>
+
+</svg>

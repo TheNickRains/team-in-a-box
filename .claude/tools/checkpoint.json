@@ -1,0 +1,18 @@
+{
+    "name": "checkpoint",
+    "description": "Record a beat to scratch that wasn't a file edit. Use for: decisions made that didn't produce a file change, hypotheses rejected and why, direction changes, blockers surfaced, insights that should survive this session. Do not use for file edits — those are captured automatically.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "beat": {
+          "type": "string",
+          "description": "One-line description of what happened. Be specific: name the decision, the rejected hypothesis, the blocker, or the insight. Not 'discussed architecture' — 'decided to defer DID layer until after cohort matching is validated'."
+        },
+        "task": {
+          "type": "string",
+          "description": "Optional task slug to override the active task marker for this beat. Use when the beat belongs to a different task than the current active one."
+        }
+      },
+      "required": ["beat"]
+    }
+  }

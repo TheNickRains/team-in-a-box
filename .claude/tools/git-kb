@@ -1,0 +1,11 @@
+#!/bin/bash
+# git-kb — PATH stub so `git kb <args>` resolves to the file-based shim.
+#
+# git invokes `git-kb` for the `kb` subcommand when it is found on PATH.
+# To activate: symlink into ~/.local/bin, or prepend .claude/tools to PATH:
+#   export PATH="$(pwd)/.claude/tools:$PATH"
+#
+# Honors cwd: exec passes through all arguments unchanged.
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "$SCRIPT_DIR/kb.sh" "$@"

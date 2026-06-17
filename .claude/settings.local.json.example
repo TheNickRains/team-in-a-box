@@ -1,0 +1,33 @@
+{
+  // settings.local.json — machine-local Claude Code deny rules.
+  // Copy this file to settings.local.json and customize for your environment.
+  // settings.local.json is gitignored and never committed.
+  //
+  // Common patterns to deny in production/shared environments:
+  //   - Destructive database operations
+  //   - Force-push to protected branches
+  //   - Dropping tables or resetting migrations
+  //   - Production deploy commands you want to gate manually
+  //
+  // The "deny" list uses the same tool-call matcher syntax as settings.json.
+  // See Claude Code docs for full matcher reference.
+
+  "permissions": {
+    "deny": [
+      // Example: block accidental DB resets
+      // "Bash(psql * DROP DATABASE *)",
+      // "Bash(psql * DROP TABLE *)",
+
+      // Example: block force-push to main/master
+      // "Bash(git push --force * main)",
+      // "Bash(git push --force * master)",
+
+      // Example: block prod deploy without manual confirmation
+      // "Bash(pnpm run deploy)",
+
+      // Example: block reading secrets from .env files directly
+      // "Bash(cat .env*)",
+      // "Bash(grep * .env*)"
+    ]
+  }
+}

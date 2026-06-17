@@ -1,0 +1,20 @@
+# GitKB runtime state (generated; not committed)
+.kb/scratch/
+.kb/claims/
+.kb/tasks/
+.kb/events.log
+.kb/workspaces/
+
+# Claude local settings
+.claude/settings.local.json
+.claude/.init-state
+
+# Telemetry watermarks / session logs
+.claude/telemetry*.jsonl
+.claude/telemetry-*.jsonl
+
+# System
+.DS_Store
+
+# Dependencies (if project gains a package.json)
+node_modules/

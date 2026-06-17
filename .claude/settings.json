@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": ["Edit(.claude/agents/*)", "Bash(git add *)"]
+    },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/chair-guard.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/auto-checkpoint.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "checkpoint",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/checkpoint.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/auto-softcommit.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/telemetry.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

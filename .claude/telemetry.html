@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>team-in-a-box · Token Ledger</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Berkeley+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --border-bright: #2a2a2a;
+    --text: #e0e0e0;
+    --text-dim: #555;
+    --text-muted: #333;
+    --accent: #f5c542;
+    --accent-dim: #7a6220;
+    --green: #3ddc84;
+    --green-dim: #1a4a32;
+    --red: #ff5f5f;
+    --red-dim: #4a1a1a;
+    --blue: #5b9ef5;
+    --blue-dim: #1a2a4a;
+    --mono: 'Berkeley Mono', 'Fira Code', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .header-time {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* File input */
+  .load-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .load-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .load-path {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent-dim);
+    flex: 1;
+  }
+  input[type="file"] {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  input[type="file"]::-webkit-file-upload-button {
+    background: var(--border-bright);
+    color: var(--text);
+    border: none;
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-bottom: 1px;
+  }
+  .stat {
+    background: var(--surface);
+    padding: 16px;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.blue { color: var(--blue); }
+  .stat-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* Two column layout */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    margin-top: 1px;
+    margin-bottom: 1px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    margin-top: 1px;
+    margin-bottom: 1px;
+  }
+
+  /* Panels */
+  .panel {
+    background: var(--surface);
+    padding: 16px;
+  }
+  .panel-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Bar chart */
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .bar-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text);
+    width: 120px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border-bright);
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+  .bar-fill.green { background: var(--green); }
+  .bar-fill.blue { background: var(--blue); }
+  .bar-fill.red { background: var(--red); }
+  .bar-value {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    width: 70px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* Cache efficiency */
+  .cache-ring {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .ring-wrap {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+  }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .ring-info {}
+  .ring-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .ring-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+  }
+
+  /* Log table */
+  .log-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+  .log-table th {
+    text-align: left;
+    color: var(--text-dim);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0 8px 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 9px;
+  }
+  .log-table td {
+    padding: 6px 8px 6px 0;
+    border-bottom: 1px solid var(--border-bright);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  .log-table tr:last-child td { border-bottom: none; }
+  .log-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+  }
+  .badge-opus { background: rgba(245,197,66,0.15); color: var(--accent); }
+  .badge-sonnet { background: rgba(91,158,245,0.15); color: var(--blue); }
+  .badge-haiku { background: rgba(61,220,132,0.15); color: var(--green); }
+  .badge-other { background: var(--border); color: var(--text-dim); }
+
+  .token-num { color: var(--text); }
+  .token-cached { color: var(--green); }
+  .token-miss { color: var(--accent-dim); }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 48px 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 2;
+  }
+  .empty-icon { font-size: 24px; margin-bottom: 16px; opacity: 0.3; }
+  .empty-cmd {
+    display: inline-block;
+    background: var(--border);
+    padding: 2px 8px;
+    color: var(--text-dim);
+    font-size: 10px;
+    margin-top: 8px;
+  }
+
+  /* Timeline sparkline */
+  .sparkline { display: flex; align-items: flex-end; gap: 2px; height: 40px; }
+  .spark-bar {
+    flex: 1;
+    background: var(--accent);
+    opacity: 0.6;
+    min-height: 2px;
+    transition: opacity 0.2s;
+  }
+  .spark-bar:hover { opacity: 1; }
+
+  .divider { height: 1px; background: var(--border); margin: 1px 0; }
+
+  /* Time filters */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 6px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .filter-btn:hover { border-color: var(--border-bright); color: var(--text); }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(245,197,66,0.08); }
+
+  /* Sessions panel */
+  .session-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+  .session-row:last-child { border-bottom: none; }
+  .session-time { color: var(--text-dim); width: 100px; flex-shrink: 0; }
+  .session-persona { color: var(--text); width: 100px; flex-shrink: 0; }
+  .session-bar { flex: 1; height: 3px; background: var(--border-bright); }
+  .session-bar-fill { height: 100%; background: var(--accent); }
+  .session-tokens { color: var(--text-dim); width: 60px; text-align: right; flex-shrink: 0; }
+  .session-cost { color: var(--accent-dim); width: 50px; text-align: right; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-title">Token Ledger</span>
+  <span class="header-sub">team-in-a-box · Claude Code telemetry</span>
+  <span class="header-time" id="now"></span>
+</div>
+
+<div class="load-section">
+  <span class="load-label">Source</span>
+  <span class="load-path">~/.claude/telemetry.jsonl</span>
+  <input type="file" id="file-input" accept=".jsonl,.json">
+</div>
+
+<div id="dashboard" style="display:none">
+
+  <!-- Time filters -->
+  <div class="filters">
+    <button class="filter-btn" data-range="1">Today</button>
+    <button class="filter-btn" data-range="7">7 days</button>
+    <button class="filter-btn" data-range="30">30 days</button>
+    <button class="filter-btn active" data-range="0">All time</button>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats-row" id="stats-row"></div>
+
+  <!-- Sparkline -->
+  <div class="panel" style="margin-top:1px; margin-bottom:1px; background:var(--surface)">
+    <div class="panel-title">Token volume · last 50 turns</div>
+    <div class="sparkline" id="sparkline"></div>
+  </div>
+
+  <!-- Persona + Model breakdown -->
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Tokens by persona</div>
+      <div id="persona-bars"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Tokens by model</div>
+      <div id="model-bars"></div>
+    </div>
+  </div>
+
+  <!-- Cache + Project + Task -->
+  <div class="grid-3">
+    <div class="panel">
+      <div class="panel-title">Cache efficiency</div>
+      <div id="cache-panel"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Tokens by project</div>
+      <div id="project-bars"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Tokens by task</div>
+      <div id="task-bars"></div>
+    </div>
+  </div>
+
+  <!-- Sessions -->
+  <div class="panel" style="margin-top:1px">
+    <div class="panel-title">Sessions</div>
+    <div id="sessions-panel"></div>
+  </div>
+
+  <!-- Log -->
+  <div class="panel" style="margin-top:1px">
+    <div class="panel-title">Recent turns · last 100</div>
+    <div style="overflow-x:auto">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Persona</th>
+            <th>Model</th>
+            <th>Project</th>
+            <th>Task</th>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Cache hit</th>
+            <th>Cache write</th>
+            <th>Tools</th>
+          </tr>
+        </thead>
+        <tbody id="log-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div id="empty-state" class="empty">
+  <div class="empty-icon">◈</div>
+  No telemetry data loaded.<br>
+  Load your <span class="empty-cmd">~/.claude/telemetry.jsonl</span> file above.<br><br>
+  <span style="color:var(--text-muted); font-size:9px">
+    Deploy <code>telemetry.sh</code> as a Stop hook to start recording.
+  </span>
+</div>
+
+<script>
+// ── Pricing (per 1M tokens, USD) ──────────────────────────────────────────
+const PRICING = {
+  'claude-opus-4-5':        { input: 15.00, output: 75.00, cache_write: 18.75, cache_read: 1.50 },
+  'claude-opus-4-7':        { input: 15.00, output: 75.00, cache_write: 18.75, cache_read: 1.50 },
+  'claude-sonnet-4-6':      { input:  3.00, output: 15.00, cache_write:  3.75, cache_read: 0.30 },
+  'claude-haiku-4-5-20251001': { input: 0.80, output:  4.00, cache_write:  1.00, cache_read: 0.08 },
+};
+
+function price(model, input, output, cache_write, cache_read) {
+  const p = PRICING[model] || { input: 3.00, output: 15.00, cache_write: 3.75, cache_read: 0.30 };
+  return (
+    (input      / 1e6) * p.input +
+    (output     / 1e6) * p.output +
+    (cache_write / 1e6) * p.cache_write +
+    (cache_read  / 1e6) * p.cache_read
+  );
+}
+
+function modelBadge(model) {
+  if (!model) return `<span class="badge badge-other">unknown</span>`;
+  const m = model.toLowerCase();
+  if (m.includes('opus'))   return `<span class="badge badge-opus">opus</span>`;
+  if (m.includes('sonnet')) return `<span class="badge badge-sonnet">sonnet</span>`;
+  if (m.includes('haiku'))  return `<span class="badge badge-haiku">haiku</span>`;
+  return `<span class="badge badge-other">${model.split('-').slice(-1)[0]}</span>`;
+}
+
+function fmt(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'k';
+  return n.toString();
+}
+
+function fmtCost(c) {
+  if (c >= 1) return '$' + c.toFixed(2);
+  return '$' + c.toFixed(4);
+}
+
+function fmtTime(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    + ' ' + d.toTimeString().slice(0, 5);
+}
+
+function bars(container, data, colorClass) {
+  const max = Math.max(...Object.values(data));
+  container.innerHTML = Object.entries(data)
+    .sort((a,b) => b[1]-a[1])
+    .slice(0, 10)
+    .map(([label, val]) => `
+      <div class="bar-row">
+        <div class="bar-label" title="${label}">${label || '—'}</div>
+        <div class="bar-track">
+          <div class="bar-fill ${colorClass||''}" style="width:${max ? (val/max*100) : 0}%"></div>
+        </div>
+        <div class="bar-value">${fmt(val)}</div>
+      </div>
+    `).join('');
+}
+
+function ring(pct, label) {
+  const r = 26, circ = 2 * Math.PI * r;
+  const dash = (pct/100) * circ;
+  return `
+    <div class="ring-wrap">
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="${r}" fill="none" stroke="#1e1e1e" stroke-width="6"/>
+        <circle cx="32" cy="32" r="${r}" fill="none" stroke="#3ddc84" stroke-width="6"
+          stroke-dasharray="${dash} ${circ}" stroke-linecap="butt"/>
+      </svg>
+      <div class="ring-label">${Math.round(pct)}%</div>
+    </div>
+    <div class="ring-info">
+      <div class="ring-title">${label}</div>
+    </div>
+  `;
+}
+
+let allRecords = [];
+let currentRange = 0; // 0 = all, 1 = today, 7 = 7 days, 30 = 30 days
+
+function filterByRange(records, days) {
+  if (days === 0) return records;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  cutoff.setHours(0, 0, 0, 0);
+  return records.filter(r => {
+    const ts = new Date(r.turn_timestamp || r.logged_at);
+    return ts >= cutoff;
+  });
+}
+
+function render(records) {
+  if (!records.length) return;
+
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+
+  // Apply time filter
+  const filtered = filterByRange(records, currentRange);
+  if (!filtered.length) {
+    document.getElementById('stats-row').innerHTML = '<div class="stat" style="grid-column:span 6;text-align:center;color:var(--text-dim)">No data in selected time range</div>';
+    return;
+  }
+
+  // Aggregate
+  let totalInput = 0, totalOutput = 0, totalCacheRead = 0, totalCacheWrite = 0;
+  let totalCost = 0, totalTools = 0;
+  const byPersona = {}, byModel = {}, byProject = {}, byTask = {}, bySession = {};
+
+  filtered.forEach(r => {
+    const inp = r.input_tokens || 0;
+    const out = r.output_tokens || 0;
+    const cr  = r.cache_read_tokens || 0;
+    const cw  = r.cache_creation_tokens || 0;
+    const total = inp + out + cr + cw;
+
+    totalInput     += inp;
+    totalOutput    += out;
+    totalCacheRead += cr;
+    totalCacheWrite+= cw;
+    totalTools     += r.tool_calls || 0;
+    totalCost      += price(r.model, inp, out, cw, cr);
+
+    const p = r.persona || 'orchestrator';
+    byPersona[p] = (byPersona[p] || 0) + total;
+
+    const m = r.model ? r.model.split('-').slice(1,3).join('-') : 'unknown';
+    byModel[m] = (byModel[m] || 0) + total;
+
+    const proj = r.project || 'unknown';
+    byProject[proj] = (byProject[proj] || 0) + total;
+
+    const task = r.task || '—';
+    byTask[task] = (byTask[task] || 0) + total;
+
+    // Track sessions
+    const sid = r.session_id || 'unknown';
+    if (!bySession[sid]) {
+      bySession[sid] = { tokens: 0, cost: 0, persona: r.persona, turns: 0, first: r.turn_timestamp, last: r.turn_timestamp };
+    }
+    bySession[sid].tokens += total;
+    bySession[sid].cost += price(r.model, inp, out, cw, cr);
+    bySession[sid].turns++;
+    if (r.turn_timestamp < bySession[sid].first) bySession[sid].first = r.turn_timestamp;
+    if (r.turn_timestamp > bySession[sid].last) bySession[sid].last = r.turn_timestamp;
+  });
+
+  const totalTokens = totalInput + totalOutput + totalCacheRead + totalCacheWrite;
+  const cacheHitPct = totalTokens ? (totalCacheRead / totalTokens * 100) : 0;
+  const savings = (totalCacheRead / 1e6) * 3.00; // vs Sonnet input price
+
+  // Stats row
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat">
+      <div class="stat-label">Total tokens</div>
+      <div class="stat-value">${fmt(totalTokens)}</div>
+      <div class="stat-sub">${filtered.length} turns</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Est. cost</div>
+      <div class="stat-value accent">${fmtCost(totalCost)}</div>
+      <div class="stat-sub">all models blended</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Cache read</div>
+      <div class="stat-value green">${fmt(totalCacheRead)}</div>
+      <div class="stat-sub">${fmtCost(savings)} saved</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Cache write</div>
+      <div class="stat-value blue">${fmt(totalCacheWrite)}</div>
+      <div class="stat-sub">tokens stored</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Output</div>
+      <div class="stat-value">${fmt(totalOutput)}</div>
+      <div class="stat-sub">generated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Tool calls</div>
+      <div class="stat-value">${fmt(totalTools)}</div>
+      <div class="stat-sub">across all turns</div>
+    </div>
+  `;
+
+  // Sparkline — last 50 turns
+  const recent = filtered.slice(-50);
+  const maxTurn = Math.max(...recent.map(r =>
+    (r.input_tokens||0)+(r.output_tokens||0)+(r.cache_read_tokens||0)+(r.cache_creation_tokens||0)
+  ));
+  document.getElementById('sparkline').innerHTML = recent.map(r => {
+    const t = (r.input_tokens||0)+(r.output_tokens||0)+(r.cache_read_tokens||0)+(r.cache_creation_tokens||0);
+    const h = maxTurn ? Math.max(2, (t/maxTurn*100)) : 2;
+    return `<div class="spark-bar" style="height:${h}%" title="${fmt(t)} tokens · ${r.persona}"></div>`;
+  }).join('');
+
+  // Persona bars
+  bars(document.getElementById('persona-bars'), byPersona, '');
+
+  // Model bars
+  bars(document.getElementById('model-bars'), byModel, 'blue');
+
+  // Cache panel
+  document.getElementById('cache-panel').innerHTML = `
+    <div class="cache-ring">${ring(cacheHitPct, 'Cache hit rate')}</div>
+    <div style="margin-top:12px">
+      <div class="bar-row">
+        <div class="bar-label">Cache read</div>
+        <div class="bar-track"><div class="bar-fill green" style="width:${cacheHitPct}%"></div></div>
+        <div class="bar-value">${fmt(totalCacheRead)}</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Fresh input</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${totalTokens ? (totalInput/totalTokens*100) : 0}%"></div>
+        </div>
+        <div class="bar-value">${fmt(totalInput)}</div>
+      </div>
+    </div>
+  `;
+
+  // Project bars
+  bars(document.getElementById('project-bars'), byProject, 'blue');
+
+  // Task bars
+  bars(document.getElementById('task-bars'), byTask, 'green');
+
+  // Sessions panel
+  const maxSessionTokens = Math.max(...Object.values(bySession).map(s => s.tokens));
+  const sessionsHtml = Object.entries(bySession)
+    .sort((a, b) => new Date(b[1].last) - new Date(a[1].last))
+    .slice(0, 15)
+    .map(([sid, s]) => `
+      <div class="session-row">
+        <div class="session-time">${fmtTime(s.first)}</div>
+        <div class="session-persona">${s.persona || 'orchestrator'}</div>
+        <div class="session-bar">
+          <div class="session-bar-fill" style="width:${maxSessionTokens ? (s.tokens/maxSessionTokens*100) : 0}%"></div>
+        </div>
+        <div class="session-tokens">${fmt(s.tokens)}</div>
+        <div class="session-cost">${fmtCost(s.cost)}</div>
+      </div>
+    `).join('');
+  document.getElementById('sessions-panel').innerHTML = sessionsHtml || '<div style="color:var(--text-dim)">No sessions</div>';
+
+  // Log — last 100 turns, sorted by timestamp descending
+  const sortedFiltered = [...filtered].sort((a, b) =>
+    new Date(b.turn_timestamp || b.logged_at) - new Date(a.turn_timestamp || a.logged_at)
+  );
+  const logRows = sortedFiltered.slice(0, 100).map(r => `
+    <tr>
+      <td style="color:var(--text-dim); white-space:nowrap">${fmtTime(r.turn_timestamp || r.logged_at)}</td>
+      <td>${r.persona || '—'}</td>
+      <td>${modelBadge(r.model)}</td>
+      <td style="color:var(--text-dim)">${r.project || '—'}</td>
+      <td style="color:var(--text-dim); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${r.task || '—'}</td>
+      <td class="token-num">${fmt(r.input_tokens||0)}</td>
+      <td class="token-num">${fmt(r.output_tokens||0)}</td>
+      <td class="token-cached">${fmt(r.cache_read_tokens||0)}</td>
+      <td class="token-miss">${fmt(r.cache_creation_tokens||0)}</td>
+      <td style="color:var(--text-dim)">${r.tool_calls||0}</td>
+    </tr>
+  `).join('');
+  document.getElementById('log-body').innerHTML = logRows;
+}
+
+// ── Filter buttons ────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentRange = parseInt(btn.dataset.range, 10);
+    if (allRecords.length) render(allRecords);
+  });
+});
+
+// ── File loading ──────────────────────────────────────────────────────────
+document.getElementById('file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.trim().split('\n').filter(Boolean);
+    const raw = lines.map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+    // Deduplicate by session_id + turn_timestamp + output_tokens
+    const seen = new Set();
+    allRecords = raw.filter(r => {
+      const key = `${r.session_id}|${r.turn_timestamp}|${r.output_tokens}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    render(allRecords);
+  };
+  reader.readAsText(file);
+});
+
+// ── Auto-load from local server ───────────────────────────────────────────
+// If served via `telemetry-server`, auto-fetch the data
+async function autoLoad() {
+  try {
+    const res = await fetch('http://localhost:9847/telemetry.jsonl');
+    if (!res.ok) throw new Error('not available');
+    const text = await res.text();
+    const lines = text.trim().split('\n').filter(Boolean);
+    const raw = lines.map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+    // Deduplicate by session_id + turn_timestamp + output_tokens (unique per actual turn)
+    const seen = new Set();
+    allRecords = raw.filter(r => {
+      const key = `${r.session_id}|${r.turn_timestamp}|${r.output_tokens}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    if (allRecords.length) {
+      document.querySelector('.load-path').textContent = '~/.claude/telemetry.jsonl (live)';
+      document.querySelector('.load-path').style.color = 'var(--green)';
+      render(allRecords);
+      serverAvailable = true;
+    }
+  } catch {
+    // Server not running — user can still load manually
+  }
+}
+autoLoad();
+
+// Auto-refresh every 10 seconds if server is available
+let serverAvailable = false;
+setInterval(() => {
+  if (serverAvailable) autoLoad();
+}, 10000);
+
+// Initial load
+autoLoad();
+
+// Clock
+function tick() {
+  document.getElementById('now').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+}
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>

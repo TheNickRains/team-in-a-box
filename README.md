@@ -84,11 +84,11 @@ Each persona holds a position, names their assumption, and states the one falsif
 
 ```bash
 # Clone (with git history)
-git clone https://github.com/your-org/team-in-a-box my-project
+git clone https://github.com/thenickrains/team-in-a-box my-project
 cd my-project
 
 # Or degit (clean slate)
-npx degit your-org/team-in-a-box my-project
+npx degit thenickrains/team-in-a-box my-project
 cd my-project
 ```
 

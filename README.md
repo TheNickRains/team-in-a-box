@@ -113,4 +113,4 @@ The default shim is zero-dependency but limited (no semantic search, no vector i
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
